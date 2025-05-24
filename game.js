@@ -97,7 +97,7 @@ function getRotationAngle(velocity) {
   return 0;
 }
 
-export function drawGhostSnake(ctx, gridSize, snake, delay) {
+export function drawGhostSnake(ctx, gridSize, snake, delay, scoreBoard) {
   return new Promise((resolve) => {
     let index = 0;
     const gameInterval = setInterval(() => {
@@ -110,6 +110,8 @@ export function drawGhostSnake(ctx, gridSize, snake, delay) {
       ctx.fillStyle = "#88b868";
       ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize, gridSize);
       index++;
+      drawScore(ctx, scoreBoard);
+      drawInstructions(ctx);
     }, delay);
   });
 }

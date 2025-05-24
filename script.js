@@ -56,7 +56,7 @@ function gameOver() {
   clearInterval(gameInterval);
   const deadSnake = [...snake];
   drawGame(ctx, gridSize, velocity, deadSnake, food, scoreBoard);
-  drawGhostSnake(ctx, gridSize, deadSnake, 100).then(() => {
+  drawGhostSnake(ctx, gridSize, deadSnake, 100, scoreBoard).then(() => {
     startGame();
   });
 }

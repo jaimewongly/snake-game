@@ -11,6 +11,7 @@
 
 // make repo and add to portfolio
 import { setupTouchControls, setupKeyboardControls } from "./input.js";
+import { drawGame } from "./game.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
@@ -65,7 +66,7 @@ function startGame() {
   lastVelocity.y = velocity.y;
   generateNextFood();
   clearInterval(gameInterval); // stop any previous game loops!
-  gameInterval = setInterval(drawGame, speed); // start fresh
+  gameInterval = setInterval(play, speed); // start fresh
 }
 
 function showGhostSnake(deadSnake) {
@@ -153,7 +154,7 @@ function willCrash(nextHead) {
   return false;
 }
 
-function drawGame() {
+function play() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Move snake head
@@ -184,21 +185,7 @@ function drawGame() {
     snake.pop(); // Remove the tail
   }
 
-  // Draw snake
-  ctx.fillStyle = "#6a4c93";
-  for (let part of snake) {
-    ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize, gridSize);
-  }
-
-  // Draw food
-  ctx.fillStyle = "#ffb4a2";
-  ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
-
-  // Draw score
-  ctx.fillStyle = "white";
-  ctx.font = "16px sans-serif";
-  ctx.fillText(`Score: ${score}`, 10, 20);
-  ctx.fillText(`High Score: ${highScore}`, 10, 40);
+  drawGame(ctx, gridSize, snake, food, score, highScore);
 
   lastVelocity.x = velocity.x;
   lastVelocity.y = velocity.y;

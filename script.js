@@ -1,7 +1,5 @@
 // TODO
 
-// Save high score in local storage
-
 // Styling- custom sprite styles
 
 // Sound effects
@@ -12,17 +10,20 @@
 // themes (garden, space, ocean, etc.)
 
 // make repo and add to portfolio
+import { setupTouchControls, setupKeyboardControls } from "./input.js";
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
-
-const gridSize = 20; // pixels
+const gridSize = 20;
 const tileCount = canvas.width / gridSize;
+
+let score = 0;
+let highScore = localStorage.getItem("highScore") || 0;
 
 let gameInterval;
 let speed = 100;
 
-let velocity = { x: 1, y: 0 }; // moving right initially
+let velocity = { x: 1, y: 0 };
 let lastVelocity = { x: 1, y: 0 };
 
 let snake = [
@@ -33,54 +34,12 @@ let snake = [
 
 let food = { x: 15, y: 10 };
 
-let touchStartX = 0;
-let touchStartY = 0;
-
-canvas.addEventListener("touchstart", (e) => {
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
-});
-
-canvas.addEventListener("touchend", (e) => {
-  const touch = e.changedTouches[0];
-  const dx = touch.clientX - touchStartX;
-  const dy = touch.clientY - touchStartY;
-
-  if (Math.abs(dx) > Math.abs(dy)) {
-    // Horizontal swipe
-    if (dx > 0 && lastVelocity.x === 0) {
-      velocity = { x: 1, y: 0 };
-    } else if (dx < 0 && lastVelocity.x === 0) {
-      velocity = { x: -1, y: 0 };
-    }
-  } else {
-    // Vertical swipe
-    if (dy > 0 && lastVelocity.y === 0) {
-      velocity = { x: 0, y: 1 };
-    } else if (dy < 0 && lastVelocity.y === 0) {
-      velocity = { x: 0, y: -1 };
-    }
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  const key = e.key;
-
-  if (key === "ArrowUp" && lastVelocity.y == 0) {
-    velocity = { x: 0, y: -1 };
-  } else if (key === "ArrowDown" && lastVelocity.y == 0) {
-    velocity = { x: 0, y: 1 };
-  } else if (key === "ArrowLeft" && lastVelocity.x == 0) {
-    velocity = { x: -1, y: 0 };
-  } else if (key === "ArrowRight" && lastVelocity.x == 0) {
-    velocity = { x: 1, y: 0 };
-  }
-});
+setupTouchControls(canvas, velocity, lastVelocity);
+setupKeyboardControls(velocity, lastVelocity);
 
 function generateNextFood() {
-  newX = Math.floor(Math.random() * tileCount);
-  newY = Math.floor(Math.random() * tileCount);
+  let newX = Math.floor(Math.random() * tileCount);
+  let newY = Math.floor(Math.random() * tileCount);
 
   // Check if the new food position is on the snake
   for (let part of snake) {
@@ -94,13 +53,16 @@ function generateNextFood() {
 
 function startGame() {
   // Optional: reset
+  score = 0;
   snake = [
     { x: 9, y: 9 },
     { x: 8, y: 9 },
     { x: 7, y: 9 },
   ];
-  velocity = { x: 1, y: 0 };
-  lastVelocity = velocity;
+  velocity.x = 1;
+  velocity.y = 0;
+  lastVelocity.x = velocity.x;
+  lastVelocity.y = velocity.y;
   generateNextFood();
   clearInterval(gameInterval); // stop any previous game loops!
   gameInterval = setInterval(drawGame, speed); // start fresh
@@ -140,6 +102,12 @@ function gameOver() {
   ctx.fillStyle = "#ffb4a2";
   ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
 
+  // Draw score
+  ctx.fillStyle = "white";
+  ctx.font = "16px sans-serif";
+  ctx.fillText(`Score: ${score}`, 10, 20);
+  ctx.fillText(`High Score: ${highScore}`, 10, 40);
+
   showGhostSnake(deadSnake);
 }
 
@@ -163,8 +131,6 @@ function checkCollision() {
     }
   }
 }
-
-let lastTail = { x: 0, y: 0 }; // for debugging
 
 function willCrash(nextHead) {
   // Check wall collision
@@ -208,6 +174,11 @@ function drawGame() {
   // Check if Slippy ate food
   if (newHead.x === food.x && newHead.y === food.y) {
     // Don’t pop the tail = snake grows!
+    score++;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+    }
     generateNextFood(); // Generate new food
   } else {
     snake.pop(); // Remove the tail
@@ -223,7 +194,14 @@ function drawGame() {
   ctx.fillStyle = "#ffb4a2";
   ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
 
-  lastVelocity = { ...velocity };
+  // Draw score
+  ctx.fillStyle = "white";
+  ctx.font = "16px sans-serif";
+  ctx.fillText(`Score: ${score}`, 10, 20);
+  ctx.fillText(`High Score: ${highScore}`, 10, 40);
+
+  lastVelocity.x = velocity.x;
+  lastVelocity.y = velocity.y;
 }
 
 startGame(); // Start the game on page load

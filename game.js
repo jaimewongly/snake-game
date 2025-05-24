@@ -6,6 +6,7 @@ let toggle = true;
 import foods from "./foods.js";
 let currentFoodImage = foods[randomInt(foods.length)];
 const munch = new Audio("assets/munch.mp3");
+const oof = new Audio("assets/oof.mp3");
 
 export function drawGame(ctx, gridSize, velocity, snake, food, scoreBoard) {
   drawSnake(ctx, snake, gridSize, velocity);
@@ -138,9 +139,20 @@ function playEatingSound() {
 }
 
 export function willCrash(nextHead, snake, tileCount) {
-  return (
-    willCrashIntoWall(nextHead, tileCount) || willCrashIntoSelf(nextHead, snake)
-  );
+  let willCrash =
+    willCrashIntoWall(nextHead, tileCount) ||
+    willCrashIntoSelf(nextHead, snake);
+  if (willCrash) {
+    playCrashSound();
+  }
+  return willCrash;
+}
+
+function playCrashSound() {
+  if (oof.readyState >= 2) {
+    oof.currentTime = 0;
+    oof.play();
+  }
 }
 
 function willCrashIntoWall(nextHead, tileCount) {

@@ -61,7 +61,7 @@ function startGame() {
 function gameOver() {
   clearInterval(gameInterval);
   const deadSnake = [...snake];
-  drawGame(ctx, gridSize, deadSnake, food, scoreBoard);
+  drawGame(ctx, gridSize, velocity, deadSnake, food, scoreBoard);
   drawGhostSnake(ctx, gridSize, deadSnake, 100).then(() => {
     startGame();
   });
@@ -79,7 +79,7 @@ function play() {
   }
   snake.unshift(newHead);
   eatFood(newHead, snake, food, scoreBoard, tileCount);
-  drawGame(ctx, gridSize, snake, food, scoreBoard);
+  drawGame(ctx, gridSize, velocity, snake, food, scoreBoard);
   lastVelocity.x = velocity.x;
   lastVelocity.y = velocity.y;
 }

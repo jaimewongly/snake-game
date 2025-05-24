@@ -5,6 +5,7 @@ headImageB.src = "assets/treeckoB.png";
 let toggle = true;
 import foods from "./foods.js";
 let currentFoodImage = foods[randomInt(foods.length)];
+const munch = new Audio("assets/munch.mp3");
 
 export function drawGame(ctx, gridSize, velocity, snake, food, scoreBoard) {
   drawSnake(ctx, snake, gridSize, velocity);
@@ -117,6 +118,7 @@ export function generateNextFood(tileCount, snake, food) {
 
 export function eatFood(nextHead, snake, food, scoreBoard, tileCount) {
   if (nextHead.x === food.x && nextHead.y === food.y) {
+    playEatingSound();
     scoreBoard.score++;
     if (scoreBoard.score > scoreBoard.highScore) {
       scoreBoard.highScore = scoreBoard.score;
@@ -125,6 +127,13 @@ export function eatFood(nextHead, snake, food, scoreBoard, tileCount) {
     generateNextFood(tileCount, snake, food);
   } else {
     snake.pop();
+  }
+}
+
+function playEatingSound() {
+  if (munch.readyState >= 2) {
+    munch.currentTime = 0;
+    munch.play();
   }
 }
 

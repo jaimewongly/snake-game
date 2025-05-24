@@ -8,7 +8,6 @@
 
 // themes (garden, space, ocean, etc.)
 
-// make repo and add to portfolio
 import { setupTouchControls, setupKeyboardControls } from "./input.js";
 import {
   drawGame,

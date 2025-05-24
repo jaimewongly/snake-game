@@ -1,11 +1,10 @@
 // TODO
 
-// Styling- custom sprite styles
+// to run:
+//  python -m http.server
 
 // Sound effects
 // crash, eat, game over, start, high score
-
-// optimize layout for mobile
 
 // themes (garden, space, ocean, etc.)
 

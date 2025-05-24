@@ -1,7 +1,7 @@
 const headImageA = new Image();
-headImageA.src = "/assets/treeckoA.png";
+headImageA.src = "assets/treeckoA.png";
 const headImageB = new Image();
-headImageB.src = "/assets/treeckoB.png";
+headImageB.src = "assets/treeckoB.png";
 let toggle = true;
 import foods from "./foods.js";
 let currentFoodImage = foods[randomInt(foods.length)];

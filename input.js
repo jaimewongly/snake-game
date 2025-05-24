@@ -33,7 +33,7 @@ export function setupTouchControls(canvas, velocity, lastVelocity) {
   });
 }
 
-export function setupKeyboardControls(velocity, lastVelocity) {
+export function setupKeyboardControls(velocity, lastVelocity, paused) {
   document.addEventListener("keydown", (e) => {
     const key = e.key;
     if (key === "ArrowUp" && lastVelocity.y == 0) {
@@ -48,6 +48,8 @@ export function setupKeyboardControls(velocity, lastVelocity) {
     } else if (key === "ArrowRight" && lastVelocity.x == 0) {
       velocity.x = 1;
       velocity.y = 0;
+    } else if (key === "p" || key === "P") {
+      paused.state = !paused.state;
     }
   });
 }

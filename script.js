@@ -3,11 +3,6 @@
 // to run:
 //  python -m http.server
 
-// Sound effects
-// crash, eat, game over, start, high score
-
-// themes (garden, space, ocean, etc.)
-
 import { setupTouchControls, setupKeyboardControls } from "./input.js";
 import {
   drawGame,
@@ -22,6 +17,7 @@ const ctx = canvas.getContext("2d");
 const gridSize = 20;
 const tileCount = canvas.width / gridSize;
 
+let paused = { state: false };
 let scoreBoard = {
   score: 0,
   highScore: localStorage.getItem("highScore") || 0,
@@ -38,7 +34,7 @@ let lastVelocity = { x: 1, y: 0 };
 let food = { x: 15, y: 10 };
 
 setupTouchControls(canvas, velocity, lastVelocity);
-setupKeyboardControls(velocity, lastVelocity);
+setupKeyboardControls(velocity, lastVelocity, paused);
 
 function startGame() {
   scoreBoard.score = 0;
@@ -65,7 +61,21 @@ function gameOver() {
   });
 }
 
+function pauseGame() {
+  ctx.save();
+  ctx.fillStyle = "#fff";
+  ctx.font = "48px Cascadia Mono";
+  ctx.textAlign = "center";
+  ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+  ctx.restore();
+}
+
 function play() {
+  if (paused.state) {
+    pauseGame();
+    return;
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const newHead = {
     x: snake[0].x + velocity.x,

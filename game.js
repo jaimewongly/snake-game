@@ -7,18 +7,28 @@ import foods from "./foods.js";
 let currentFoodImage = foods[randomInt(foods.length)];
 const munch = new Audio("assets/munch.mp3");
 const oof = new Audio("assets/oof.mp3");
+let newHighScore = false;
+const hooray = new Audio("assets/hagrid-hooray.mp3");
 
 export function drawGame(ctx, gridSize, velocity, snake, food, scoreBoard) {
+  drawScore(ctx, scoreBoard);
+  drawInstructions(ctx);
   drawSnake(ctx, snake, gridSize, velocity);
   drawFood(ctx, food, gridSize);
-  drawScore(ctx, scoreBoard);
 }
 
 function drawScore(ctx, scoreBoard) {
   ctx.fillStyle = "white";
-  ctx.font = "16px sans-serif";
+  ctx.font = "16px Cascadia Mono";
   ctx.fillText(`Score: ${scoreBoard.score}`, 10, 20);
   ctx.fillText(`High Score: ${scoreBoard.highScore}`, 10, 40);
+}
+
+function drawInstructions(ctx) {
+  ctx.fillStyle = "white";
+  ctx.font = "16px Cascadia Mono";
+  ctx.fillText("Use arrow keys to move", 10, 60);
+  ctx.fillText("Press 'P' to pause", 10, 80);
 }
 
 function drawFood(ctx, food, gridSize) {
@@ -122,6 +132,7 @@ export function eatFood(nextHead, snake, food, scoreBoard, tileCount) {
     playEatingSound();
     scoreBoard.score++;
     if (scoreBoard.score > scoreBoard.highScore) {
+      newHighScore = true;
       scoreBoard.highScore = scoreBoard.score;
       localStorage.setItem("highScore", scoreBoard.highScore);
     }
@@ -138,12 +149,23 @@ function playEatingSound() {
   }
 }
 
+function playHooraySound() {
+  if (hooray.readyState >= 2) {
+    hooray.currentTime = 0;
+    hooray.play();
+  }
+}
+
 export function willCrash(nextHead, snake, tileCount) {
   let willCrash =
     willCrashIntoWall(nextHead, tileCount) ||
     willCrashIntoSelf(nextHead, snake);
   if (willCrash) {
     playCrashSound();
+    if (newHighScore) {
+      playHooraySound();
+      newHighScore = false;
+    }
   }
   return willCrash;
 }

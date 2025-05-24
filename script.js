@@ -24,29 +24,26 @@ const ctx = canvas.getContext("2d");
 const gridSize = 20;
 const tileCount = canvas.width / gridSize;
 
-let score = 0;
-let highScore = localStorage.getItem("highScore") || 0;
-
+let scoreBoard = {
+  score: 0,
+  highScore: localStorage.getItem("highScore") || 0,
+};
 let gameInterval;
 let speed = 100;
-
-let velocity = { x: 1, y: 0 };
-let lastVelocity = { x: 1, y: 0 };
-
 let snake = [
   { x: 9, y: 9 },
   { x: 8, y: 9 },
   { x: 7, y: 9 },
 ];
-
+let velocity = { x: 1, y: 0 };
+let lastVelocity = { x: 1, y: 0 };
 let food = { x: 15, y: 10 };
 
 setupTouchControls(canvas, velocity, lastVelocity);
 setupKeyboardControls(velocity, lastVelocity);
 
 function startGame() {
-  // Optional: reset
-  score = 0;
+  scoreBoard.score = 0;
   snake = [
     { x: 9, y: 9 },
     { x: 8, y: 9 },
@@ -56,15 +53,15 @@ function startGame() {
   velocity.y = 0;
   lastVelocity.x = velocity.x;
   lastVelocity.y = velocity.y;
-  generateNextFood(tileCount, snake, food); // Generate new food
-  clearInterval(gameInterval); // stop any previous game loops!
-  gameInterval = setInterval(play, speed); // start fresh
+  generateNextFood(tileCount, snake, food);
+  clearInterval(gameInterval);
+  gameInterval = setInterval(play, speed);
 }
 
 function gameOver() {
   clearInterval(gameInterval);
   const deadSnake = [...snake];
-  drawGame(ctx, gridSize, deadSnake, food, score, highScore);
+  drawGame(ctx, gridSize, deadSnake, food, scoreBoard);
   drawGhostSnake(ctx, gridSize, deadSnake, 100).then(() => {
     startGame();
   });
@@ -72,30 +69,19 @@ function gameOver() {
 
 function play() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Move snake head
   const newHead = {
     x: snake[0].x + velocity.x,
     y: snake[0].y + velocity.y,
   };
-
   if (willCrash(newHead, snake, tileCount)) {
-    gameOver(); // Don't move the snake yet!
+    gameOver();
     return;
   }
-
-  snake.unshift(newHead); // Add new head to the front
-
-  if (willCrash(snake[0], snake, tileCount)) {
-    gameOver();
-  }
-
-  eatFood(newHead, snake, food, score, highScore, tileCount);
-
-  drawGame(ctx, gridSize, snake, food, score, highScore);
-
+  snake.unshift(newHead);
+  eatFood(newHead, snake, food, scoreBoard, tileCount);
+  drawGame(ctx, gridSize, snake, food, scoreBoard);
   lastVelocity.x = velocity.x;
   lastVelocity.y = velocity.y;
 }
 
-startGame(); // Start the game on page load
+startGame();

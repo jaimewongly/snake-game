@@ -1,14 +1,14 @@
-export function drawGame(ctx, gridSize, snake, food, score, highScore) {
+export function drawGame(ctx, gridSize, snake, food, scoreBoard) {
   drawSnake(ctx, snake, gridSize);
   drawFood(ctx, food, gridSize);
-  drawScore(ctx, score, highScore);
+  drawScore(ctx, scoreBoard);
 }
 
-function drawScore(ctx, score, highScore) {
+function drawScore(ctx, scoreBoard) {
   ctx.fillStyle = "white";
   ctx.font = "16px sans-serif";
-  ctx.fillText(`Score: ${score}`, 10, 20);
-  ctx.fillText(`High Score: ${highScore}`, 10, 40);
+  ctx.fillText(`Score: ${scoreBoard.score}`, 10, 20);
+  ctx.fillText(`High Score: ${scoreBoard.highScore}`, 10, 40);
 }
 
 function drawFood(ctx, food, gridSize) {
@@ -52,11 +52,11 @@ export function generateNextFood(tileCount, snake, food) {
   }
 }
 
-export function eatFood(nextHead, snake, food, score, highScore, tileCount) {
+export function eatFood(nextHead, snake, food, scoreBoard, tileCount) {
   if (nextHead.x === food.x && nextHead.y === food.y) {
-    score++;
-    if (score > highScore) {
-      highScore = score;
+    scoreBoard.score++;
+    if (scoreBoard.score > scoreBoard.highScore) {
+      scoreBoard.highScore = scoreBoard.score;
       localStorage.setItem("highScore", highScore);
     }
     generateNextFood(tileCount, snake, food);
